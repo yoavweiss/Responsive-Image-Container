@@ -22,3 +22,17 @@ can work great for resolution switching
 * Placing the lower layer as an image fragment in the layer above it -
   Can be used for art-direction
 * Combining the two - to sharpen image fragments
+* Is there a case not covered by these two algorithms?
+
+## Possible container formats:
+* RIFF
+* MP4-like container format. There's a risk it's get recognized as
+  video.
+* Other ???
+
+## How will browsers fetch that format?
+Wrote this [blog
+post](http://blog.yoav.ws/2012/08/Fetching-responsive-image-format) a
+while back.
+
+
