@@ -24,11 +24,8 @@ can work great for resolution switching
 * Combining the two - to sharpen image fragments
 * Is there a case not covered by these two algorithms?
 
-## Possible container formats:
-* RIFF
-* MP4-like container format. There's a risk it's get recognized as
-  video.
-* Other ???
+## Container format:
+* [RIFF](http://en.wikipedia.org/wiki/Resource_Interchange_File_Format) is the main candidate at the moment, since it's dead simple, and WebP already uses it.
 
 ## How will browsers fetch that format?
 Wrote this [blog
