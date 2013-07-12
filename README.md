@@ -50,6 +50,12 @@ post](http://blog.yoav.ws/2012/08/Fetching-responsive-image-format) a
 while back.
 
 ## Downsides of this solution
-If art-directed images of lower resolution are completely different than
+* Decoding of this container will consume more than traditional
+  sequantial JPEGs, since it'd require layer compositing. 
+ - This may be eased by using the GPU for compositing.
+ - I'm not sure JPEGs can be used as is, since they lack an alpha channel
+* If art-directed images of lower resolution are completely different than
 their higher resolution counterparts, this solution is no good for that
-case. A separate resource would be better there.
+case. 
+ - A separate resource would be better there.
+ - There seems to be a concensus that this case is rather rare.
