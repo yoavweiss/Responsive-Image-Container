@@ -19,7 +19,7 @@ below it.
 * Simple diff - something like [this
   proposal](http://fremycompany.com/BG/2012/Responsive-Image-Protocol-proposal-908/)
 can work great for resolution switching
- - Can also be extended with better extrapolation algorithms, such as
+ - Maybe can be extended with better extrapolation algorithms, such as
    [this
 one](http://www.wisdom.weizmann.ac.il/~vision/SingleImageSR.html)
 * Placing the lower layer as an image fragment in the layer above it -
