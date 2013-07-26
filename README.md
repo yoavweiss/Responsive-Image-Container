@@ -1,12 +1,10 @@
 # Responsive Image Container
 
-This repo is meant to define how a responsive image format would look
-like.
-Currently I'm just writing very raw ideas here, so bare with me.
+This repo specifies and prototypes a new responsive image container.
 
-Tha basic principles I have in mind:
-* Support image data in multiple formats, and especially WebP, JPEG-XR
-  and JPEG.
+## The basic principles:
+
+* Support image data in multiple formats, and especially WebP & JPEG-XR.
 * Image data will be represented in layers, each layer representing a
   certain resolution.
 * The first layer represents the lowest resolution image, and each layer above it
@@ -15,7 +13,8 @@ below it.
 * The container will define a set of algorithms that can be used to
   define the diff calculation between the layers
 
-## Possible algorithms:
+## Algorithms:
+
 * Simple diff - something like [this
   proposal](http://fremycompany.com/BG/2012/Responsive-Image-Protocol-proposal-908/)
 can work great for resolution switching
@@ -28,35 +27,27 @@ one](http://www.wisdom.weizmann.ac.il/~vision/SingleImageSR.html)
 * Combining all of the above.
 * Other???
 
-## Possible container formats:
-* [RIFF](http://en.wikipedia.org/wiki/Resource_Interchange_File_Format)
- - Used by WebP
- - Simple
- - Requires the file's size upfront which sucks for on-the-fly file manipulations
-* [ISO base media format](http://en.wikipedia.org/wiki/ISO_base_media_file_format)
- - Used by MP4
- - Simple
- - Doesn't require file size upfront
- - Proprietary. Possible licensing issues, but I doubt it.
-* [Matroska](http://www.matroska.org/technical/specs/index.html)
- - Used by WebM
- - Not so simple. Highly focused on videos, so it might be a problem to extend it to support images.
- - Doesn't require file size upfront
- - Open & free standard
+## Container format:
 
-I've decided to go with an ISO based container, because of its
-simplicity, extensibility and the fact that it is streaming friendly.
+After hesitating between [RIFF](http://en.wikipedia.org/wiki/Resource_Interchange_File_Format), 
+[Matroska](http://www.matroska.org/technical/specs/index.html) and 
+[ISO base media format](http://en.wikipedia.org/wiki/ISO_base_media_file_format), 
+I've decided to go with the ISO media format, because of its
+simplicity, extensibility and the fact that it is streaming friendly,
+(the entire file's size is not required before writing the file's
+header).
 
 ## How will browsers fetch that format?
+
 Wrote this [blog
 post](http://blog.yoav.ws/2012/08/Fetching-responsive-image-format) a
 while back.
 
 ## Downsides of this solution
+
 * Decoding of this container will consume more than traditional
   sequantial JPEGs, since it'd require layer compositing. 
  - This may be eased by using the GPU for compositing.
- - I'm not sure JPEGs can be used as is, since they lack an alpha channel
 * If art-directed images of lower resolution are completely different than
 their higher resolution counterparts, this solution is no good for that
 case. 
