@@ -37,11 +37,17 @@ Internal Fields:
 
 ### ILDT - Image Layer DaTa
 
-The payload of the layer.
+The payload of the layer. Basically the image data.
+
+### LBAS - Layer Base image
+
+Indicates that the following box will contain a base image that should
+be decoded on its own, without reference to previous images.
 
 ### LAHD - Layer Algorithm Higher Definition
 
-TBD
+Indicates that the following box will contain an image that is an
+enhancement layer to the images that preceded it. 
 
 ### LACR - Layer Algorithm CRop
 
