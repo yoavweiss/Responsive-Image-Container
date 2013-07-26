@@ -1,5 +1,10 @@
 
 class Algo:
+    
+    @classmethod
+    def getPixels(self, img):
+        img.convert('RGB')
+        return list(img.getdata())
     class Encoder:
         def __init__(self, orgImg, options):
             self.orgImg = orgImg

@@ -10,14 +10,24 @@ class ResSwitchEncoder(Algo.Encoder):
         print "ImgLayer", img, self.orgImg
         if referenceImg:
             upscaledReference = referenceImg.resize(img.size, Image.ANTIALIAS)
-            diff = ImageChops.subtract(img, upscaledReference)
+            diff = self.diffImage(img, upscaledReference)
         return img, diff
 
-    def readOptions(self):
-        self.resolutions = self.options['resolutions']
+    def diffImage(self, highQ, lowQ):
+        highQPixels = Algo.getPixels(highQ)
+        lowQPixels = Algo.getPixels(lowQ)
+        diffPixels = []
+        for h, l in zip(highQPixels, lowQPixels):
+            pixel = []
+            for i in range(3):
+                pixel.append((h[i] - l[i] + 256) / 2)
+            diffPixels.append(tuple(pixel))
+        diff = Image.new("RGB", highQ.size)
+        diff.putdata(diffPixels)
+        return diff
 
     def encode(self):
-        self.readOptions()
+        self.resolutions = self.options['resolutions']
         layers = []
         prevLayer = None
         for res in self.resolutions:
@@ -37,8 +47,23 @@ class ResSwitchDecoder(Algo.Decoder):
                 img = layer
                 continue
             upscaled = img.resize(layer.size, Image.ANTIALIAS)
-            img = ImageChops.add(upscaled, layer)
+            img = self.rebuildImage(layer, upscaled)
         return img
+
+    def rebuildImage(self, diff, lowQ):
+        diffPixels = Algo.getPixels(diff)
+        lowQPixels = Algo.getPixels(lowQ)
+        highQPixels = []
+        count = 0
+        for d, l in zip(diffPixels, lowQPixels):
+            pixel = []
+            for i in range(3):
+                pixel.append((d[i] * 2) - 256 + l[i])
+            highQPixels.append(tuple(pixel))
+            count += 1
+        highQ = Image.new("RGB", diff.size)
+        highQ.putdata(highQPixels)
+        return highQ
 
 
 
