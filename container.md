@@ -35,19 +35,19 @@ Internal Fields:
 * 4 bytes - image width of the corresponding layer
 * 8 bytes - byte offset of the end of the box that contains the corresponding layer
 
-### ILDT - Image Layer DaTa
-
-The payload of the layer. Basically the image data.
-
 ### LBAS - Layer Base image
 
-Indicates that the following box will contain a base image that should
-be decoded on its own, without reference to previous images.
+The box contains a base image that shold be decoded on its own, without reference to previous images.
+
+Internal fields:
+* (boxLength - 8) bytes - Image data
 
 ### LAHD - Layer Algorithm Higher Definition
 
-Indicates that the following box will contain an image that is an
-enhancement layer to the images that preceded it. 
+The box contains contains an image that is an enhancement layer to the images that preceded it. 
+
+Internal fields:
+* (boxLength - 8) bytes - Image data
 
 ### LACR - Layer Algorithm CRop
 
