@@ -51,14 +51,27 @@ Internal fields:
 
 ### LACR - Layer Algorithm CRop
 
-TBD
+ALL WE NEED IS CROP. Naa na na na na
+Add crop to this layer, simplifying it significantly
 
-### LART - Layer Algorithm RoTate
+The "logo on the side" thing can be acheived by alpha transparency and a
+background image
 
-TBD
+The bow contains an image that is the difference image between the
+preceding layer image, placed somewhere on the current resolution
+canvas, and the current one ?????????????????????????? Use words
+!!!!!!!!
 
-### LAPR - Layer Algorithm PaRtial
-
-TBD
+Internal fields:
+2 bytes - Width of the previous layer's crop 
+2 bytes - Height of the previous layer's crop 
+2 bytes - X coords of the previous layer's crop 
+2 bytes - Y coords of the previous layer's crop  
+2 bytes - Width of the previous layer inside this layer
+2 bytes - Height of the previous layer inside this layer
+2 bytes - X coords of the previous layer inside this layer
+2 bytes - Y coords of the previous layer inside this layer
+2 bytes - Rotate angle of previous layer inside this layer
+(boxLength - 26) bytes - Image data
 
 

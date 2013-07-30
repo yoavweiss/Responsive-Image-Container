@@ -1,4 +1,4 @@
-from PIL import Image, ImageChops
+from PIL import Image
 import algo
 from StringIO import StringIO
 import iso_media
@@ -113,6 +113,4 @@ class ResSwitch(object):
                 layers.append(self.readImageBuffer(payload))
 
             return layers
-
-
 
