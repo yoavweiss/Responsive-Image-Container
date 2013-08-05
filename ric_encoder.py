@@ -1,20 +1,18 @@
 #!/usr/bin/python
 
 import iso_media
-import res_switch
 from PIL import Image
 from StringIO import StringIO
 import sys
+import coder
+import decoder
+import wrapper
+import json
 
-codecs = {
-        "res_switch": res_switch.ResSwitch,
-        }
-def ric_encode(imgbuf, codec_type, encode_options):
-    codec = codecs[codec_type]
+def ric_encode(imgbuf, config):
     img = Image.open(StringIO(imgbuf))
-    encoder = codec.Algo.Encoder(img, encode_options)
-    layers = encoder.encode()
-    wrapped_layers, offsetTable = codec.Wrapper().wrapLayers(layers)
+    layers = coder.encode(img, config)
+    wrapped_layers, offsetTable = wrapper.wrapLayers(layers)
     output = ""
     output += iso_media.write_box("FTYP", "RIC ")
     output += iso_media.write_box("ILOT", write_layer_offsets(offsetTable))
@@ -22,7 +20,6 @@ def ric_encode(imgbuf, codec_type, encode_options):
     return output
 
 def ric_decode(imgbuf, codec_type, encode_options):
-    codec = codecs[codec_type]
     offset = 0
     boxType = None
     boxLen, boxType, payload = iso_media.read_box(imgbuf[offset:])
@@ -35,8 +32,8 @@ def ric_decode(imgbuf, codec_type, encode_options):
         print >> sys.stderr, "No offset table???", boxType
         return None
     offset += boxLen
-    layers = codec.Wrapper().unwrapLayers(imgbuf[offset:])
-    outputImg = codec.Algo.Decoder(layers).decode()
+    layers = wrapper.unwrapLayers(imgbuf[offset:])
+    outputImg = decoder.decode(layers)
     output = StringIO()
     outputImg.save(output, "JPEG", quality = 90);
     return output.getvalue()
@@ -56,7 +53,7 @@ commands = {
 
 def read_cli_args():
     if len(sys.argv) < 4:
-        print >>sys.stderr, "Usage:", sys.argv[0], "<input file> <output file> <resolution 1> <resolution 2> ...."
+        print >>sys.stderr, "Usage:", sys.argv[0], "<input file> <output file> <config file>"
         return None
     commandStr = sys.argv[1]
     if not commands.has_key(commandStr):
@@ -65,20 +62,13 @@ def read_cli_args():
     command = commands[commandStr]
     input_filename = sys.argv[2]
     output_filename = sys.argv[3]
-    resolutions = []
-    prev_res = 0
-    res = 0
-    for i in range(4, len(sys.argv)):
-        res = sys.argv[i]
-        if res < prev_res:
-            print >> sys.stderr, "Resolutions must be in incremental order"
-            return None
-        resolutions.append(int(sys.argv[i]))
-    return command, input_filename, output_filename, resolutions
+    config_filename = sys.argv[4]
+    return command, input_filename, output_filename, config_filename
 
-def apply(command, input_filename, output_filename, resolutions):
+def apply(command, input_filename, output_filename, config_filename):
     input = open(input_filename, "rb").read()
-    output = command(input, "res_switch", {'resolutions': resolutions})
+    config = json.load(open(config_filename, "rb"))
+    output = command(input, config)
     if output:
         open(output_filename, "wb").write(output)
 

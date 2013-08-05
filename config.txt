@@ -1,0 +1,8 @@
+  [ { "canvaswidth": 300, 
+      "imgwidth": 300,
+      "crop": [0, 0, 300, 300]},
+    { "canvaswidth": 600,
+      "imgwidth": 800,
+      "crop": [0, 0, 600, 400],
+      "position": [200, 0],
+      "rotate": 90} ]
