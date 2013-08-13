@@ -33,14 +33,21 @@ def undiffImage(diff, lowQ):
     return highQ
 
 def projectPrevLayerToCurrent(prev, canvasWidth, position, projectionSize, rotateAngle, crop):
+    print "projecting", prev.size, crop, position, canvasWidth, projectionSize
     projection = prev.copy()
     # Crop to compensate for lower layer offset
-    projection.crop(crop)
+    projection=projection.crop(crop)
     # Rotate the lower layer to match the rotate of the upper layer
-    projection.rotate(rotateAngle)
+    projection=projection.rotate(rotateAngle)
     # Inverse the downsize 
-    projection.resize(projectionSize, Image.ANTIALIAS)
+    projection=projection.resize(projectionSize, Image.ANTIALIAS)
     # Inverse crop
     canvas = Image.new('RGBA', canvasWidth, (0, 0, 0, 0))
     canvas.paste(projection, position)
     return canvas
+
+def cropDimensions(crop):
+    firstX, firstY, secondX, secondY = crop
+    width = secondX - firstX
+    height = secondY - firstY
+    return width, height

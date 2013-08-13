@@ -1,8 +1,7 @@
-  [ { "canvaswidth": 300, 
-      "imgwidth": 300,
-      "crop": [0, 0, 300, 300]},
-    { "canvaswidth": 600,
-      "imgwidth": 800,
-      "crop": [0, 0, 600, 400],
-      "position": [200, 0],
-      "rotate": 90} ]
+  [ { "imgwidth": 200,
+      "crop": [210, 120, 510, 420],
+      "rotate": 0},
+    { "imgwidth": 400,
+      "crop": [180, 90, 720, 480],
+      "position": [0, 0],
+      "rotate": 0} ]
