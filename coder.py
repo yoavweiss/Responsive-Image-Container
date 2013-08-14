@@ -13,16 +13,18 @@ class Coder(object):
         # crop the target image from the original image
         target=target.crop(parameter.crop)
 
-        # resize it to match the width
-        target.thumbnail((parameter.img_width, parameter.img_width), Image.ANTIALIAS)
-
         # rotate
         target=target.rotate(parameter.rotate)
+
+        # resize it to match the width
+        target.thumbnail((parameter.imgWidth, parameter.imgWidth), Image.ANTIALIAS)
 
         # position it on the canvas
         width, height = target.size
         posX, posY = parameter.position
-        output = Image.new('RGBA', parameter.canvas_dimensions, (0, 0, 0, 0))
+        print "target dimensions", width, height
+        #print "canvas_dimensions", parameter.canvas_dimensions
+        output = Image.new('RGBA', (posX + width, posY + height), (0, 0, 0, 255))
         output.paste(target, (posX, posY))
         return output
 
@@ -33,7 +35,7 @@ class Coder(object):
     def projectPrevLayerParametersToCurrent(self, prevLayerConfig, currLayerConfig):
         # Calculate the previous layer's crop, to compensate for offset
         posX, posY = prevLayerConfig.position
-        imgWidth = prevLayerConfig.img_width
+        imgWidth = prevLayerConfig.imgWidth
         imgHeight = int(imgWidth * self.imgProportion(prevLayerConfig.crop))
         crop = (posX, posY, posX + imgWidth, posY + imgHeight)
 
@@ -46,8 +48,8 @@ class Coder(object):
         # to get the dimensions to which we need to inflate the previous layer
         currWidth = cropDimensions(currLayerConfig.crop)[0]
         prevWidth, prevHeight = cropDimensions(prevLayerConfig.crop)
-        prevResizeRatio = (float(prevWidth)/prevLayerConfig.img_width)
-        currResizeRatio = (float(currWidth)/currLayerConfig.img_width)
+        prevResizeRatio = (float(prevWidth)/prevLayerConfig.imgWidth)
+        currResizeRatio = (float(currWidth)/currLayerConfig.imgWidth)
         ratio = prevResizeRatio/currResizeRatio
         prevWidth = float(prevWidth)/prevResizeRatio
         prevHeight = float(prevHeight)/prevResizeRatio
@@ -58,7 +60,9 @@ class Coder(object):
         prevCropX0, prevCropY0, prevCropX1, prevCropY1 = prevLayerConfig.crop
         position = (int(float(prevCropX0 - currCropX0)/currResizeRatio), 
                     int(float(prevCropY0 - currCropY0)/currResizeRatio))
-        return currLayerConfig.canvas_dimensions, position, projectionSize, rotateAngle, crop
+        canvasDimensions = (currLayerConfig.imgWidth, currLayerConfig.imgHeight)
+        print "Canvas Dimensions", canvasDimensions
+        return canvasDimensions, position, projectionSize, rotateAngle, crop
 
     def createLayer(self, img, layerConfig, prevLayer, prevLayerConfig):
         targetImg = self.createTargetImage(img, layerConfig)
@@ -85,7 +89,7 @@ class Coder(object):
             layerConfig = LayerConfig(img, layerConf)
             prevLayer, parameters, diff = self.createLayer(img, layerConfig, prevLayer, prevLayerConfig)
             prevLayerConfig = layerConfig
-            layers.append((diff or prevLayer, parameters, layerConfig.img_width))
+            layers.append((diff or prevLayer, parameters, layerConfig.imgWidth))
 
         return layers
 

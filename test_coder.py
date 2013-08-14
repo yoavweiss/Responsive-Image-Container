@@ -8,17 +8,16 @@ from config_reader import LayerConfig
 
 class TestCoder(unittest.TestCase):
 
-    def testEncode(self):
-        # Currently this test passes anyway, but it creates a bunch of file that enable to peek into the outputs
-        # Improvements: ssim test, output layers file size and final output file size
-        img = Image.open("samples/obama.jpg")
-        config = json.load(open("config.txt", "rb"))
+    def encode(self, filename, configname):
+        img = Image.open(filename)
+        basename=filename.split("/")[1]
+        config = json.load(open(configname, "rb"))
         layers = coder.Coder().encode(img, config)
         i = 0
         layers2 = []
         for layer in layers:
             i += 1
-            layerFileName = "/tmp/layer" + str(i) + ".webp"
+            layerFileName = "/tmp/" + basename + "_layer" + str(i) + ".webp"
             layer[0].save(layerFileName, "WEBP", quality=95)
             layer[0].save(layerFileName+".png", "PNG", quality=95)
             # TODO: Run ssim test to see that the image we got is correct
@@ -28,6 +27,16 @@ class TestCoder(unittest.TestCase):
         #dcd = decoder.decode()
         #dcd.save("/tmp/decoded.png", "PNG")
         #img.save("/tmp/obama.png", "PNG")
+
+    def testEncodeCrop(self):
+        # Currently this test passes anyway, but it creates a bunch of file that enable to peek into the outputs
+        # Improvements: ssim test, output layers file size and final output file size
+        self.encode("samples/obama.jpg", "samples/obama_config.txt")
+
+    def testEncodeRotate(self):
+        # Currently this test passes anyway, but it creates a bunch of file that enable to peek into the outputs
+        # Improvements: ssim test, output layers file size and final output file size
+        self.encode("samples/iphone.png", "samples/iphone_config.txt")
 
     def testCreateTargetImage(self):
         img = Image.open("samples/obama.jpg")

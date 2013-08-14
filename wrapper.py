@@ -10,7 +10,7 @@ def wrapLayers(layers, quality = 95, diffquality = 90):
             def writeValue(val):
                 if type(val) is float:
                     val = int(val*100)
-                return iso_media.write_int32(val)
+                return iso_media.write_int16(val)
             assert not parameters or len(parameters) == PARAM_NUM, "Wrong parameters number. Decoder won't be able to decode this"
             buf = ""
             for param in parameters:
@@ -34,7 +34,7 @@ def wrapLayers(layers, quality = 95, diffquality = 90):
     print layers
     for layer, parameters, res in layers:
         currLayer = wrapLayer(  layer, 
-                                "LBAS" if first else "LACR",
+                                "LBAS" if first else "LAEN",
                                 quality if first else diffquality,
                                 parameters)
         offsetTable.append((offset + len(currLayer), res))

@@ -42,7 +42,7 @@ def projectPrevLayerToCurrent(prev, canvasWidth, position, projectionSize, rotat
     # Inverse the downsize 
     projection=projection.resize(projectionSize, Image.ANTIALIAS)
     # Inverse crop
-    canvas = Image.new('RGBA', canvasWidth, (0, 0, 0, 0))
+    canvas = Image.new('RGBA', canvasWidth, (0, 0, 0, 255))
     canvas.paste(projection, position)
     return canvas
 

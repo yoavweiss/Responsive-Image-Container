@@ -17,11 +17,11 @@ import codec_utils
 class LayerConfig(object):
     def __init__(self, img, config):
         width, height = img.size
-        ratio = float(height) / width
         self.crop = tuple(config.get('crop', [0, 0, width, height]))
-        self.img_width = config.get('imgwidth', codec_utils.cropDimensions(self.crop)[0])
+        cropWidth, cropHeight = codec_utils.cropDimensions(self.crop)
+        cropRatio = float(cropHeight) / cropWidth
+        self.imgWidth = config.get('imgwidth', cropWidth)
+        self.imgHeight = int(self.imgWidth * cropRatio)
         self.position = tuple(config.get('position', [0,0]))
-        canvasWidth = self.img_width + self.position[0]
-        self.canvas_dimensions = (canvasWidth, int(canvasWidth*ratio))
         self.rotate = float(config.get('rotate', 0))
 

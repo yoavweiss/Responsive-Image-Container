@@ -25,20 +25,11 @@ This box will let the decoder know which image resolutions are available
 and which offsets these resolutions *end* with.
 The goal is that the decoder can then safely fetch only the bytes needed
 to display the resolution it needs.
-An image must contains either an ILOT box or an ILXT box (described
-below)
+An image must contain an ILOT box.
 
 Internal Fields:
 * 2 bytes - image width of the corresponding layer
 * 4 bytes - byte offset of the end of the box that contains the corresponding layer
-
-### ILXT - Image Layer eXtended offset Table
-
-Similiar to ILOT, but with larger field sizes, for extremely large images
-
-Internal Fields:
-* 4 bytes - image width of the corresponding layer
-* 8 bytes - byte offset of the end of the box that contains the corresponding layer
 
 ### LBAS - Layer BASe image
 
