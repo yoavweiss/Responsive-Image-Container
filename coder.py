@@ -22,8 +22,6 @@ class Coder(object):
         # position it on the canvas
         width, height = target.size
         posX, posY = parameter.position
-        print "target dimensions", width, height
-        #print "canvas_dimensions", parameter.canvas_dimensions
         output = Image.new('RGBA', (posX + width, posY + height), (0, 0, 0, 0))
         output.paste(target, (posX, posY))
         return output
@@ -40,7 +38,7 @@ class Coder(object):
         crop = (posX, posY, posX + imgWidth, posY + imgHeight)
 
         # calculate the rotate angle difference
-        rotateAngle = prevLayerConfig.rotate - currLayerConfig.rotate
+        rotateAngle = currLayerConfig.rotate - prevLayerConfig.rotate
         if rotateAngle < 0:
             rotateAngle += 360
 
@@ -61,7 +59,6 @@ class Coder(object):
         position = (int(float(prevCropX0 - currCropX0)/currResizeRatio), 
                     int(float(prevCropY0 - currCropY0)/currResizeRatio))
         canvasDimensions = (currLayerConfig.imgWidth, currLayerConfig.imgHeight)
-        print "Canvas Dimensions", canvasDimensions
         return canvasDimensions, position, projectionSize, rotateAngle, crop
 
     def createLayer(self, img, layerConfig, prevLayer, prevLayerConfig):

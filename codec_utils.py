@@ -40,10 +40,11 @@ def projectPrevLayerToCurrent(prev, canvasWidth, position, projectionSize, rotat
     projection = prev.copy()
     # Crop to compensate for lower layer offset
     projection=projection.crop(crop)
-    # Rotate the lower layer to match the rotate of the upper layer
-    projection=projection.rotate(rotateAngle)
     # Inverse the downsize 
     projection=projection.resize(projectionSize, Image.ANTIALIAS)
+    # Rotate the lower layer to match the rotate of the upper layer
+    print "rotating", rotateAngle, projection.size
+    projection=projection.rotate(rotateAngle)
     # Inverse crop
     canvas = Image.new('RGBA', canvasWidth, (0, 0, 0, 0))
     canvas.paste(projection, position)
