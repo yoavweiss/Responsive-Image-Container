@@ -64,11 +64,11 @@ canvas, to enable resolution specific addition to be added as a separate
 resource, using a CSS background image.
 
 Internal fields:
-2 bytes - Display width of the previous layer in current layer
-2 bytes - Rotate angle of the previous layer, when placed on current layer, in hundredth of a degree (e.g. 180° will be an unsigned int of 18000)
-2 bytes - X coordinates of the initial position of the previous layer's placement on current layer
-2 bytes - Y coordinates of the initial position of the previous layer's placement on current layer
-2 bytes - X coordinates of the initial position of the current layer's placement on the canvas
-2 bytes - Y coordinates of the initial position of the current layer's placement on the canvas
-(boxLength - 26) bytes - Image data
+* 2 bytes - Display width of the previous layer in current layer
+* 2 bytes - Rotate angle of the previous layer, when placed on current layer, in hundredth of a degree (e.g. 180° will be an unsigned int of 18000)
+* 2 bytes - X coordinates of the initial position of the previous layer's placement on current layer
+* 2 bytes - Y coordinates of the initial position of the previous layer's placement on current layer
+* 2 bytes - X coordinates of the initial position of the current layer's placement on the canvas
+* 2 bytes - Y coordinates of the initial position of the current layer's placement on the canvas
+* (boxLength - 20) bytes - Image data
 
