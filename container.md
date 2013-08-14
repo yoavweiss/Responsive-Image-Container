@@ -16,12 +16,17 @@ All values in the container are big-endian unsigned integer values, unless state
 
 ### FTYP - File type box 
 Standard and common to all ISO media files
-Its value defines the file type. For the Responsive Image container the value must be "RIC "
+Its value defines the file type. For the Responsive Image container the
+value must be "RIC ". Note the space (0x20) at the end.
 
 ### ILOT - Image Layer Offset Table
 
-This box will let the decoder know which image resolutions are available and which offsets these resolutions *end* with
-The goal is that the decoder can then safely fetch only the bytes needed to display the resolution it needs
+This box will let the decoder know which image resolutions are available
+and which offsets these resolutions *end* with.
+The goal is that the decoder can then safely fetch only the bytes needed
+to display the resolution it needs.
+An image must contains either an ILOT box or an ILXT box (described
+below)
 
 Internal Fields:
 * 2 bytes - image width of the corresponding layer
@@ -35,43 +40,35 @@ Internal Fields:
 * 4 bytes - image width of the corresponding layer
 * 8 bytes - byte offset of the end of the box that contains the corresponding layer
 
-### LBAS - Layer Base image
+### LBAS - Layer BASe image
 
 The box contains a base image that shold be decoded on its own, without reference to previous images.
+For most practical cases, an image should contain one LBAS box, and it
+should precede any LAEN boxes (described below).
 
 Internal fields:
 * (boxLength - 8) bytes - Image data
 
-### LAHD - Layer Algorithm Higher Definition
-
-The box contains contains an image that is an enhancement layer to the images that preceded it. 
-
-Internal fields:
-* (boxLength - 8) bytes - Image data
-
-### LACR - Layer Algorithm CRop
-
-ALL WE NEED IS CROP. Naa na na na na
-Add crop to this layer, simplifying it significantly
-
-The "logo on the side" thing can be acheived by alpha transparency and a
-background image
-
-The bow contains an image that is the difference image between the
-preceding layer image, placed somewhere on the current resolution
-canvas, and the current one ?????????????????????????? Use words
-!!!!!!!!
+### LAEN - LAyer ENhancement
+This box contains an enhacement layer &mdash; an image that contitutes
+the difference between the previous resolution image and the current
+one.
+The enhancement can be:
+* Higher resolution of an image identical to the previous resolution's
+image
+* A higher context image than the previous resolution one (i.e. the
+previous resolution image is a crop of the current one). It's also
+possible that the previous image is rotated.
+* The entire layer can be arbitrarily positioned on a transparent
+canvas, to enable resolution specific addition to be added as a separate
+resource, using a CSS background image.
 
 Internal fields:
-2 bytes - Width of the previous layer's crop 
-2 bytes - Height of the previous layer's crop 
-2 bytes - X coords of the previous layer's crop 
-2 bytes - Y coords of the previous layer's crop  
-2 bytes - Width of the previous layer inside this layer
-2 bytes - Height of the previous layer inside this layer
-2 bytes - X coords of the previous layer inside this layer
-2 bytes - Y coords of the previous layer inside this layer
-2 bytes - Rotate angle of previous layer inside this layer
+2 bytes - Display width of the previous layer in current layer
+2 bytes - Rotate angle of the previous layer, when placed on current layer, in hundredth of a degree (e.g. 180° will be an unsigned int of 18000)
+2 bytes - X coordinates of the initial position of the previous layer's placement on current layer
+2 bytes - Y coordinates of the initial position of the previous layer's placement on current layer
+2 bytes - X coordinates of the initial position of the current layer's placement on the canvas
+2 bytes - Y coordinates of the initial position of the current layer's placement on the canvas
 (boxLength - 26) bytes - Image data
-
 
