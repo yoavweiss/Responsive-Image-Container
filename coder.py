@@ -24,7 +24,7 @@ class Coder(object):
         posX, posY = parameter.position
         print "target dimensions", width, height
         #print "canvas_dimensions", parameter.canvas_dimensions
-        output = Image.new('RGBA', (posX + width, posY + height), (0, 0, 0, 255))
+        output = Image.new('RGBA', (posX + width, posY + height), (0, 0, 0, 0))
         output.paste(target, (posX, posY))
         return output
 
