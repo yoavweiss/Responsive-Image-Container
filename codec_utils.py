@@ -5,6 +5,8 @@ def getPixels(img):
     return list(img.getdata())
 
 def diffImage(highQ, lowQ):
+    if lowQ.size > highQ.size:
+        lowQ=lowQ.crop((0,0,highQ.size[0], highQ.size[1]))
     highQPixels = getPixels(highQ)
     lowQPixels = getPixels(lowQ)
     diffPixels = []
