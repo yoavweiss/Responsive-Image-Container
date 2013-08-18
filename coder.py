@@ -5,7 +5,6 @@ import iso_media
 from codec_utils import diffImage, projectPrevLayerToCurrent, cropDimensions
 from config_reader import LayerConfig
 
-
 class Coder(object):
 
     def createTargetImage(self, img, parameter):
@@ -49,9 +48,6 @@ class Coder(object):
         prevResizeRatio = (float(prevWidth)/prevLayerConfig.imgWidth)
         currResizeRatio = (float(currWidth)/currLayerConfig.imgWidth)
         ratio = prevResizeRatio/currResizeRatio
-        prevWidth = float(prevWidth)/prevResizeRatio
-        prevHeight = float(prevHeight)/prevResizeRatio
-        projectionSize = (int(prevWidth*ratio), int(prevHeight*ratio))
 
         # Find the lower layer's position on the upper layer, to inverse the crop
         currCropX0, currCropY0, currCropX1, currCropY1 = currLayerConfig.crop
@@ -59,7 +55,7 @@ class Coder(object):
         position = (int(float(prevCropX0 - currCropX0)/currResizeRatio), 
                     int(float(prevCropY0 - currCropY0)/currResizeRatio))
         canvasDimensions = (currLayerConfig.imgWidth, currLayerConfig.imgHeight)
-        return canvasDimensions, position, projectionSize, rotateAngle, crop
+        return canvasDimensions, position, rotateAngle, crop, ratio
 
     def createLayer(self, img, layerConfig, prevLayer, prevLayerConfig):
         targetImg = self.createTargetImage(img, layerConfig)

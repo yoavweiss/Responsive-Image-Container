@@ -18,8 +18,8 @@ class TestCoder(unittest.TestCase):
         for layer in layers:
             i += 1
             layerFileName = "/tmp/" + basename + "_layer" + str(i) + ".webp"
-            layer[0].save(layerFileName, "WEBP", quality=95)
-            layer[0].save(layerFileName+".png", "PNG", quality=95)
+            layer[0].save(layerFileName, "WEBP", quality=90)
+            #layer[0].save(layerFileName+".png", "PNG", quality=95)
             # TODO: Run ssim test to see that the image we got is correct
             layer2 = Image.open(layerFileName)
             layers2.append(layer2)
