@@ -1,0 +1,2 @@
+  [ { "imgwidth": 200},
+    { "imgwidth": 400} ]

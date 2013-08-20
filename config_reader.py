@@ -9,9 +9,7 @@ import codec_utils
 # Example:
   [ { 'img_width': 200,
       'crop': (0, 0, 300, 300)},
-    { 'crop': (0, 0, 600, 400),
-      'position': (200, 0),
-      'rotate': 90} ]
+    { 'crop': (0, 0, 600, 400) } ]
 """
 
 class LayerConfig(object):
@@ -22,6 +20,4 @@ class LayerConfig(object):
         cropRatio = float(cropHeight) / cropWidth
         self.imgWidth = config.get('imgwidth', cropWidth)
         self.imgHeight = int(self.imgWidth * cropRatio)
-        self.position = tuple(config.get('position', [0,0]))
-        self.rotate = float(config.get('rotate', 0))
 

@@ -1,7 +1,5 @@
 from PIL import Image
 
-counter = 0
-
 def getPixels(img):
     img.convert('RGBA')
     return list(img.getdata())
@@ -15,8 +13,12 @@ def diffImage(highQ, lowQ):
     for h, l in zip(highQPixels, lowQPixels):
         pixel = []
         if l[3]>0:
-            for i in range(4):
+            for i in range(3):
                 pixel.append((h[i] - l[i] + 256) / 2)
+            if len(h) == 4:
+                pixel.append((h[3] - l[3] + 256) / 2)
+            else:
+                pixel.append(l[3])
             diffPixels.append(tuple(pixel))
         else:
             diffPixels.append(h)
@@ -45,23 +47,11 @@ def cropDimensions(crop):
     height = secondY - firstY
     return width, height
 
-def projectPrevLayerToCurrent(prev, canvasWidth, position, rotateAngle, crop, ratio):
-    global counter
-    counter += 1
+def projectPrevLayerToCurrent(prev, canvasWidth, position, ratio):
     projection = prev.copy()
-    # Crop to compensate for lower layer offset
-    if cropDimensions(crop) < prev.size:
-        projection=projection.crop(crop)
-        projection.save("/tmp/crop"+str(counter)+".webp", "WEBP")
     # Inverse the downsize 
     upscale_size = tuple([int(x*ratio) for x in projection.size])
-    print "upscale", upscale_size
-    print "Here upscaling screws up rotate since the dimensions are fucked"
     projection=projection.resize(upscale_size, Image.ANTIALIAS)
-    projection.save("/tmp/upscale"+str(counter)+".webp", "WEBP")
-    # Rotate the lower layer to match the rotate of the upper layer
-    projection=projection.rotate(rotateAngle)
-    projection.save("/tmp/rotate"+str(counter)+".webp", "WEBP")
     # Inverse crop
     canvas = Image.new('RGBA', canvasWidth, (0, 0, 0, 0))
     canvas.paste(projection, position)

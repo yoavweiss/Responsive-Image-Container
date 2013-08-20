@@ -26,39 +26,25 @@ class TestCoder(unittest.TestCase):
         #decoder = res_switch.ResSwitch.Algo.Decoder(layers2)
         #dcd = decoder.decode()
         #dcd.save("/tmp/decoded.png", "PNG")
-        #img.save("/tmp/obama.png", "PNG")
+        #img.save("/tmp/crop.png", "PNG")
 
-    def estEncodeCrop(self):
+    def testEncodeCrop(self):
         # Currently this test passes anyway, but it creates a bunch of file that enable to peek into the outputs
         # Improvements: ssim test, output layers file size and final output file size
-        self.encode("samples/obama.jpg", "samples/obama_config.txt")
+        self.encode("samples/crop.jpg", "samples/crop_config.txt")
 
-    def estEncodeRotate(self):
+    def testEncodeResSwitch(self):
         # Currently this test passes anyway, but it creates a bunch of file that enable to peek into the outputs
         # Improvements: ssim test, output layers file size and final output file size
-        self.encode("samples/iphone.png", "samples/iphone_config.txt")
+        self.encode("samples/res_switch.png", "samples/res_switch_config.txt")
 
-    def testEncodePosition(self):
-        # Currently this test passes anyway, but it creates a bunch of file that enable to peek into the outputs
-        # Improvements: ssim test, output layers file size and final output file size
-        self.encode("samples/iphone_pos.png", "samples/iphone_pos_config.txt")
-        #self.encode("samples/obama_pos.jpg", "samples/obama_pos_config.txt")
-
-    def estCreateTargetImage(self):
-        img = Image.open("samples/obama.jpg")
+    def testCreateTargetImage(self):
+        img = Image.open("samples/crop.jpg")
         encoder = coder.Coder()
-        # Create a crop and rotate it
-        layerConf = LayerConfig(img, {"crop":(0, 0, 300, 300), "rotate": 90})
+        # Create a crop and resize it
+        layerConf = LayerConfig(img, {"imgwidth": 200, "crop":(0, 0, 300, 300)})
         target = encoder.createTargetImage(img, layerConf)
         target.save("/tmp/target1.webp", "WEBP", quality=95)
-        # Create a crop rotate and resize it
-        layerConf = LayerConfig(img, {"imgwidth": 200, "crop":(0, 0, 300, 300), "rotate": 90})
-        target = encoder.createTargetImage(img, layerConf)
-        target.save("/tmp/target2.webp", "WEBP", quality=95)
-        # Create a crop, rotate, resize it and reposition
-        layerConf = LayerConfig(img, {"imgwidth": 200, "canvaswidth": 400, "crop":(0, 0, 300, 300), "rotate": 90, "position":(200, 0)})
-        target = encoder.createTargetImage(img, layerConf)
-        target.save("/tmp/target3.webp", "WEBP", quality=95)
 
 def main():
     unittest.main()

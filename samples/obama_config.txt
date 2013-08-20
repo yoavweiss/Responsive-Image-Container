@@ -1,7 +1,0 @@
-  [ { "imgwidth": 200,
-      "crop": [210, 120, 510, 420],
-      "rotate": 0},
-    { "imgwidth": 400,
-      "crop": [180, 90, 720, 480],
-      "position": [0, 0],
-      "rotate": 0} ]
