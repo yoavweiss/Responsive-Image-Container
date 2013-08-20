@@ -28,17 +28,23 @@ class TestCoder(unittest.TestCase):
         #dcd.save("/tmp/decoded.png", "PNG")
         #img.save("/tmp/obama.png", "PNG")
 
-    def testEncodeCrop(self):
+    def estEncodeCrop(self):
         # Currently this test passes anyway, but it creates a bunch of file that enable to peek into the outputs
         # Improvements: ssim test, output layers file size and final output file size
         self.encode("samples/obama.jpg", "samples/obama_config.txt")
 
-    def testEncodeRotate(self):
+    def estEncodeRotate(self):
         # Currently this test passes anyway, but it creates a bunch of file that enable to peek into the outputs
         # Improvements: ssim test, output layers file size and final output file size
         self.encode("samples/iphone.png", "samples/iphone_config.txt")
 
-    def testCreateTargetImage(self):
+    def testEncodePosition(self):
+        # Currently this test passes anyway, but it creates a bunch of file that enable to peek into the outputs
+        # Improvements: ssim test, output layers file size and final output file size
+        self.encode("samples/iphone_pos.png", "samples/iphone_pos_config.txt")
+        #self.encode("samples/obama_pos.jpg", "samples/obama_pos_config.txt")
+
+    def estCreateTargetImage(self):
         img = Image.open("samples/obama.jpg")
         encoder = coder.Coder()
         # Create a crop and rotate it

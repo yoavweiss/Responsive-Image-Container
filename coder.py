@@ -5,9 +5,13 @@ import iso_media
 from codec_utils import diffImage, projectPrevLayerToCurrent, cropDimensions
 from config_reader import LayerConfig
 
+counter=0
+
 class Coder(object):
 
     def createTargetImage(self, img, parameter):
+        global counter
+        counter+=1
         target = img.copy()
         # crop the target image from the original image
         target=target.crop(parameter.crop)
@@ -23,6 +27,7 @@ class Coder(object):
         posX, posY = parameter.position
         output = Image.new('RGBA', (posX + width, posY + height), (0, 0, 0, 0))
         output.paste(target, (posX, posY))
+        output.save("/tmp/target"+str(counter)+".webp", "WEBP")
         return output
 
     def imgProportion(self, crop):
@@ -35,6 +40,7 @@ class Coder(object):
         imgWidth = prevLayerConfig.imgWidth
         imgHeight = int(imgWidth * self.imgProportion(prevLayerConfig.crop))
         crop = (posX, posY, posX + imgWidth, posY + imgHeight)
+        print "crop", crop
 
         # calculate the rotate angle difference
         rotateAngle = currLayerConfig.rotate - prevLayerConfig.rotate
@@ -50,14 +56,16 @@ class Coder(object):
         ratio = prevResizeRatio/currResizeRatio
 
         # Find the lower layer's position on the upper layer, to inverse the crop
+        currX, currY = currLayerConfig.position
         currCropX0, currCropY0, currCropX1, currCropY1 = currLayerConfig.crop
         prevCropX0, prevCropY0, prevCropX1, prevCropY1 = prevLayerConfig.crop
-        position = (int(float(prevCropX0 - currCropX0)/currResizeRatio), 
-                    int(float(prevCropY0 - currCropY0)/currResizeRatio))
-        canvasDimensions = (currLayerConfig.imgWidth, currLayerConfig.imgHeight)
+        position = (currX + int(float(prevCropX0 - currCropX0)/currResizeRatio), 
+                    currY + int(float(prevCropY0 - currCropY0)/currResizeRatio))
+        canvasDimensions = (currLayerConfig.imgWidth + currX, currLayerConfig.imgHeight + currY)
         return canvasDimensions, position, rotateAngle, crop, ratio
 
     def createLayer(self, img, layerConfig, prevLayer, prevLayerConfig):
+        global counter
         targetImg = self.createTargetImage(img, layerConfig)
         diff = None
 
@@ -69,6 +77,9 @@ class Coder(object):
 
             # Create a diff image
             diff = diffImage(targetImg, referenceImg)
+            referenceImg.save("/tmp/ref"+str(counter)+".webp", "WEBP")
+            diff.save("/tmp/diff"+str(counter)+".webp", "WEBP")
+
         return targetImg, parameters, diff
 
     def encode(self, img, config):
