@@ -1,12 +1,16 @@
 from PIL import Image
-from codec_utils import undiffImage
+from codec_utils import undiffImage, projectPrevLayerToCurrent
 
-def decode(layers):
-    img = None
-    for layer in layers:
-        if not img:
-            img = layer
-            continue
-        upscaled = img.resize(layer.size, Image.ANTIALIAS)
-        img = rebuildImage(layer, upscaled)
-    return img
+class Decoder(object):
+    def rebuildImage(self, prevLayer, currLayer, parameters):
+        base = projectPrevLayerToCurrent(prevLayer, *parameters)
+        return undiffImage(currLayer, base)
+
+    def decode(self, layers):
+        img = None
+        for layer, parameters in layers:
+            if not img:
+                img = layer
+                continue
+            img = self.rebuildImage(img, layer, parameters)
+        return img

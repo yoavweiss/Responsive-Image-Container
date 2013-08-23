@@ -1,7 +1,7 @@
 from PIL import Image
 
 def getPixels(img):
-    img.convert('RGBA')
+    img = img.convert('RGBA')
     return list(img.getdata())
 
 def diffImage(highQ, lowQ):
@@ -13,12 +13,8 @@ def diffImage(highQ, lowQ):
     for h, l in zip(highQPixels, lowQPixels):
         pixel = []
         if l[3]>0:
-            for i in range(3):
+            for i in range(4):
                 pixel.append((h[i] - l[i] + 256) / 2)
-            if len(h) == 4:
-                pixel.append((h[3] - l[3] + 256) / 2)
-            else:
-                pixel.append(l[3])
             diffPixels.append(tuple(pixel))
         else:
             diffPixels.append(h)
@@ -33,9 +29,12 @@ def undiffImage(diff, lowQ):
     count = 0
     for d, l in zip(diffPixels, lowQPixels):
         pixel = []
-        for i in range(4):
-            pixel.append((d[i] * 2) - 256 + l[i])
-        highQPixels.append(tuple(pixel))
+        if l[3]>0:
+            for i in range(4):
+                pixel.append((d[i] * 2) - 256 + l[i])
+            highQPixels.append(tuple(pixel))
+        else:
+            highQPixels.append(d)
         count += 1
     highQ = Image.new("RGBA", diff.size)
     highQ.putdata(highQPixels)
@@ -47,13 +46,24 @@ def cropDimensions(crop):
     height = secondY - firstY
     return width, height
 
-def projectPrevLayerToCurrent(prev, canvasWidth, position, ratio):
+def projectPrevLayerToCurrent(prev, canvasDimensions, position, ratio):
     projection = prev.copy()
+    ratiores = float(ratio[0]) / ratio[1]
     # Inverse the downsize 
-    upscale_size = tuple([int(x*ratio) for x in projection.size])
+    upscale_size = tuple([int(x*ratiores) for x in projection.size])
     projection=projection.resize(upscale_size, Image.ANTIALIAS)
     # Inverse crop
-    canvas = Image.new('RGBA', canvasWidth, (0, 0, 0, 0))
+    canvas = Image.new('RGBA', canvasDimensions, (0, 0, 0, 0))
     canvas.paste(projection, position)
     return canvas
+
+def gcd(a, b):
+    if a < b:
+        a, b = b, a
+
+    while b > 0:
+        t = b
+        b = a % t
+        a = t
+    return a
 

@@ -4,14 +4,14 @@ import iso_media
 from PIL import Image
 from StringIO import StringIO
 import sys
-import coder
-import decoder
+from coder import Coder
+from decoder import Decoder
 import wrapper
 import json
 
 def ric_encode(imgbuf, config):
     img = Image.open(StringIO(imgbuf))
-    layers = coder.encode(img, config)
+    layers = Coder().encode(img, config)
     wrapped_layers, offsetTable = wrapper.wrapLayers(layers)
     output = ""
     output += iso_media.write_box("FTYP", "RIC ")
@@ -19,7 +19,7 @@ def ric_encode(imgbuf, config):
     output += wrapped_layers
     return output
 
-def ric_decode(imgbuf, codec_type, encode_options):
+def ric_decode(imgbuf):
     offset = 0
     boxType = None
     boxLen, boxType, payload = iso_media.read_box(imgbuf[offset:])
@@ -33,7 +33,7 @@ def ric_decode(imgbuf, codec_type, encode_options):
         return None
     offset += boxLen
     layers = wrapper.unwrapLayers(imgbuf[offset:])
-    outputImg = decoder.decode(layers)
+    outputImg = Decoder().decode(layers)
     output = StringIO()
     outputImg.save(output, "JPEG", quality = 90);
     return output.getvalue()

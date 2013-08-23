@@ -2,23 +2,15 @@ from StringIO import StringIO
 from PIL import Image
 import iso_media
 
-PARAM_NUM = 5
-
+params_num = {  "LBAS": 0,
+                "LAEN": 3 }
 def wrapLayers(layers, quality = 95, diffquality = 90):
     def wrapLayer(layer, boxtype, quality, parameters):
         def writeImageBuffer():
-            def writeValue(val):
-                if type(val) is float:
-                    val = int(val*100)
-                return iso_media.write_int16(val)
-            assert not parameters or len(parameters) == PARAM_NUM, "Wrong parameters number. Decoder won't be able to decode this"
             buf = ""
             for param in parameters:
-                if type(param) is tuple:
-                    for val in param:
-                        buf += writeValue(val)
-                else:
-                    buf += writeValue(param)
+                for val in param:
+                    buf += iso_media.write_int16(val)
             output = StringIO()
             layer.save(output, "WEBP", quality=quality)
             buf += output.getvalue()
@@ -31,7 +23,6 @@ def wrapLayers(layers, quality = 95, diffquality = 90):
     buf = ""
     offset = 0
     offsetTable = []
-    print layers
     for layer, parameters, res in layers:
         currLayer = wrapLayer(  layer, 
                                 "LBAS" if first else "LAEN",
@@ -44,15 +35,17 @@ def wrapLayers(layers, quality = 95, diffquality = 90):
     return buf, offsetTable
 
 def unwrapLayers(buf):
-    def readImageBuffer(imgbuf):
+    def readImageBuffer(imgbuf, type):
         offset = 0
         parameters = []
-        for i in range(PARAM_NUM):
-            parameters.append(iso_media.read_int32(imgbuf[offset]))
+        for i in range(params_num[type]):
+            parameters.append((iso_media.read_int16(imgbuf[offset:]),
+                               iso_media.read_int16(imgbuf[offset+2:])))
             offset += 4
 
 
-        io = StringIO(imgbuf[PARAM_NUM*4:])
+
+        io = StringIO(imgbuf[offset:])
         img = Image.open(io)
         io.close()
         return img, parameters
@@ -62,6 +55,6 @@ def unwrapLayers(buf):
     while offset < bufLen:
         boxLen, boxType, payload = iso_media.read_box(buf[offset:])
         offset += boxLen
-        layers.append(readImageBuffer(payload))
+        layers.append(readImageBuffer(payload, boxType))
 
     return layers

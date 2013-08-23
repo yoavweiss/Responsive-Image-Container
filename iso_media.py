@@ -3,13 +3,13 @@ import struct
 INT32_LEN = 4
 
 def read_int32(data):
-    return struct.unpack(">I", data[0:4])[0]
+    return struct.unpack(">I", data[:4])[0]
 
 def write_int32(num):
     return struct.pack(">I", num)
 
 def read_int16(data):
-    return struct.unpack(">H", data[0:4])[0]
+    return struct.unpack(">H", data[:2])[0]
 
 def write_int16(num):
     return struct.pack(">H", num)

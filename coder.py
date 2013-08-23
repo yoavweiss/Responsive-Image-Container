@@ -1,7 +1,7 @@
 from PIL import Image
 import iso_media
 
-from codec_utils import diffImage, projectPrevLayerToCurrent, cropDimensions
+from codec_utils import diffImage, projectPrevLayerToCurrent, cropDimensions, gcd
 from config_reader import LayerConfig
 
 class Coder(object):
@@ -26,9 +26,12 @@ class Coder(object):
         # to get the dimensions to which we need to inflate the previous layer
         currWidth = cropDimensions(currLayerConfig.crop)[0]
         prevWidth, prevHeight = cropDimensions(prevLayerConfig.crop)
-        prevResizeRatio = (float(prevWidth)/prevLayerConfig.imgWidth)
+        numerator = prevWidth * currLayerConfig.imgWidth
+        denominator = currWidth * prevLayerConfig.imgWidth
+        divisor = gcd(numerator, denominator)
+        ratio = (numerator / divisor, denominator / divisor)
+
         currResizeRatio = (float(currWidth)/currLayerConfig.imgWidth)
-        ratio = prevResizeRatio/currResizeRatio
 
         # Find the lower layer's position on the upper layer, to inverse the crop
         currCropX0, currCropY0, currCropX1, currCropY1 = currLayerConfig.crop
