@@ -33,7 +33,7 @@ Internal Fields:
 
 ### LBAS - Layer BASe image
 
-The box contains a base image that shold be decoded on its own, without reference to previous images.
+The box contains a base image that should be decoded on its own, without reference to previous images.
 For most practical cases, an image should contain one LBAS box, and it
 should precede any LAEN boxes (described below).
 
@@ -48,18 +48,14 @@ The enhancement can be:
 * Higher resolution of an image identical to the previous resolution's
 image
 * A higher context image than the previous resolution one (i.e. the
-previous resolution image is a crop of the current one). It's also
-possible that the previous image is rotated.
-* The entire layer can be arbitrarily positioned on a transparent
-canvas, to enable resolution specific addition to be added as a separate
-resource, using a CSS background image.
+previous resolution image is a crop of the current one). 
 
 Internal fields:
-* 2 bytes - Display width of the previous layer in current layer
-* 2 bytes - Rotate angle of the previous layer, when placed on current layer, in hundredth of a degree (e.g. 180° will be an unsigned int of 18000)
+* 2 bytes - Display width of the current layer
+* 2 bytes - Display height of the current layer
 * 2 bytes - X coordinates of the initial position of the previous layer's placement on current layer
 * 2 bytes - Y coordinates of the initial position of the previous layer's placement on current layer
-* 2 bytes - X coordinates of the initial position of the current layer's placement on the canvas
-* 2 bytes - Y coordinates of the initial position of the current layer's placement on the canvas
-* (boxLength - 20) bytes - Image data
+* 2 bytes - Numerator of the ratio in which the previous layer should be upscaled
+* 2 bytes - Denominator of the ratio in which the previous layer should be upscaled
+* (boxLength - 12) bytes - Image data
 
