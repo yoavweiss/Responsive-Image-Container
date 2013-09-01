@@ -23,9 +23,6 @@ can work great for resolution switching
 one](http://www.wisdom.weizmann.ac.il/~vision/SingleImageSR.html)
 * Placing the lower layer as an image fragment in the layer above it -
   Can be used for art-direction
-* Rotating the lower layer and including it as an image fragement
-* Combining all of the above.
-* Other???
 
 ## Container format:
 
@@ -52,4 +49,4 @@ while back.
 their higher resolution counterparts, this solution is no good for that
 case. 
  - A separate resource would be better there.
- - There seems to be a concensus that this case is rather rare.
+ - There seems to be a consensus that this case is rather rare.
