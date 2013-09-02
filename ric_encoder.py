@@ -42,7 +42,9 @@ def ric_decode(imgbuf):
 def write_layer_offsets(offsetTable):
     buf = ""
     for offset, res in offsetTable:
-        buf += iso_media.write_int16(res)
+        width, height = res
+        buf += iso_media.write_int16(width)
+        buf += iso_media.write_int16(height)
         buf += iso_media.write_int32(offset)
     return buf
 

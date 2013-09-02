@@ -67,7 +67,7 @@ class Coder(object):
             layerConfig = LayerConfig(img, layerConf)
             prevLayer, parameters, diff = self.createLayer(img, layerConfig, prevLayer, prevLayerConfig)
             prevLayerConfig = layerConfig
-            layers.append((diff or prevLayer, parameters, layerConfig.imgWidth))
+            layers.append((diff or prevLayer, parameters, (layerConfig.imgWidth, layerConfig.imgHeight)))
 
         return layers
 
