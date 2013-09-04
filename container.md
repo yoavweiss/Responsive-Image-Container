@@ -59,3 +59,32 @@ Internal fields:
 * 2 bytes - Denominator of the ratio in which the previous layer should be upscaled
 * (boxLength - 12) bytes - Image data
 
+## How is the container structured?
+
+### File type 
+<style>
+.box {display: inline-block; border: black solid 1px;box-sizing: border-box;margin: 0;padding: 0;}
+.two-bytes {max-width: 100px; width: 15%}
+.four-bytes {max-width: 200px; width: 30%}
+.infinite-bytes {max-width: 600px; width: 90%}
+</style>
+<span class="box four-bytes">Box len</span><span class="box four-bytes">"FTYP"</span><span class="box four-bytes">"RIC "</span>
+
+### Image Layer Offset Table
+<span class="box four-bytes">Box len</span><span class="box four-bytes">"ILOT"</span>
+
+<span class="box two-bytes">width</span><span class="box two-bytes">height</span><span class="box four-bytes">offset</span> x number of layers
+
+
+### Base Layer
+<span class="box four-bytes">Box len</span><span class="box four-bytes">"LBAS"</span>
+
+<span class="box infinite-bytes">Layer data</span>
+
+### Enhancement Layer
+<span class="box four-bytes">Box len</span><span class="box four-bytes">"LAEN"</span>
+
+<span class="box two-bytes">width</span><span class="box two-bytes">height</span><span class="box two-bytes">position X</span><span class="box two-bytes">position Y</span><span class="box two-bytes">Numerator</span><span class="box two-bytes">Denominator</span>
+
+<span class="box infinite-bytes">Layer data</span>
+
