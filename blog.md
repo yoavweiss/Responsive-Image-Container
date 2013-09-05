@@ -32,7 +32,7 @@ There have been [constructive discussions](http://lists.w3.org/Archives/Public/w
 ### They define breakpoints according to the viewport
 
 This one is heard often from developers. For performance reasons, markup based solutions are based on the viewport size, rather than on the image's dimensions. 
-Since the images' layout dimensions are not yet known to the browser by the time it start fetching images, it cannot rely on them to decide which resource to fetch.  
+Since the images' layout dimensions are not yet known to the browser by the time it start fetching images, it cannot rely on them to decide which resource to fetch.
 
 For developers, that means that some sort of "viewport=>dimensions" table needs to be created on the server-side/build-step or inside the developer's head in order to properly create images that are ideally sized for a certain viewport dimensions and layout.
 
@@ -136,16 +136,16 @@ If your art-direction case is special, and can't be handled by either one of tho
 
 That's where things get tricky. A special fetching mechanism must be created in order to fetch this type of images. I can't say that I have that part all figured out, but here's my rough idea on how it may work.
 
-My proposed mechanism relies on HTTP ranges, similar to the fetching mechanisms of the <video> element, when seeks are involved.
+My proposed mechanism relies on HTTP ranges, similar to the fetching mechanisms of the `<video>` element, when seeks are involved.
 
 More specifically:
 
 * Resources that should be fetched progressively should be flagged as such. One possibility is to add a `progressive` attribute on the element describing the resource.
 * Once the browser detects an image resource with a `progressive` attribute on it, it picks the initial requested range for that resurce. The initial range request can be any one of:
- - A relatively small fixed range for all images (e.g. 8KB)
- - Specified by the author (e.g. as a value of the `progressive` attribute)
- - Some heuristic
- - Based on a manifest (we'll get to that later)  
+  - A relatively small fixed range for all images (e.g. 8KB)
+  - Specified by the author (e.g. as a value of the `progressive` attribute)
+  - Some heuristic
+  - Based on a manifest (we'll get to that later)  
 * The browser can fetch this initial range at the same time it requests the entire resource today, or even sooner, since the chances of starving critical path resources (e.g. CSS & JS) are slimmer once the payloads are of known size.
 * Once the browser has downloaded the image's initial range, it has the file's offset table box, which links byte offset to resolution.  That means that once the browser has calculated the page's layout, it'd know exactly which byte range it needs in order to display the image correctly.
 * Assuming the browser sees fit, it can heuristically fetch followup layers(i.e. higher resolutions), even before it knows for certain that they are needed.
@@ -173,7 +173,7 @@ The problem with reseting a TCP connection during a browsing session are:
 * The [monochrome/print use case](http://usecases.responsiveimages.org/#matching-media-features-and-media-types) cannot be addressed by this type of a solution. 
 * The decoding algorithm involves a per-layer upscaling, which may be processing heavy. Therefore, decoding performance may be an issue. Moving this to the GPU may help, but I don't know that area well enough to be the judge of that. If you have an opinion the subject, please comment. 
 * Introducing a new file format is a painful and long process. As we have seen with the introduction of past image formats, the lack of a
-  client-side mechanism makes this a painful process for Web developers. Since new file formats start out being supported in some browsers but not others, a server-side mechanism must be used (hopefully based on the Accept header, rather than on UA). I'm hoping that the fact that this new file format is very simple, and relies on other file formats to do the heavy lifting, may help here, but I'm not sure it would.
+  client-side mechanism makes this a painful process for Web developers. Since new file formats start out being supported in some browsers but not others, a server-side mechanism must be used (hopefully based on the Accept header, rather than on UA). I'm hoping that the fact that this new file format is very simple and relies on other file formats to do the heavy lifting, may help here, but I'm not sure it would.
 * As discussed above, it's likely to increase the number of requests, and may introduce some delay in HTTP/1.1.
 * This solution cannot answer the need for "pixel perfect" images, which is mainly needed to improve decoding speed. Even if it would, it's not certain that decoding speed would benefit from it.
 * Relying on HTTP ranges for the fetching mechanism can result in some problem with intermediate cache server, which don't support it.
