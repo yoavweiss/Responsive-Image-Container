@@ -73,23 +73,57 @@ The decoder (e.g. the browser) will then be able to download just the number of 
 
 Support for resolution switching is obvious in this case, but art-direction can also be supported by positioning the previous layer on the current one and being able to give it certain dimensions.
 
-Here are some examples:
+Let's look at some examples, shall we:
 
-Res switching example !!!
-[iPhone]
-[iphone thumbnail]
-[second layer]
 
-Art-direction example !!!
-[Obama in a jeep factory]
+### Art-direction 
+Here's a photo that used often in discussion of the art-direction
+use-case (I've been too lazy to search for a new one):
 
-[First Layer]
+![Obama in a jeep factory - original with context](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/crop.jpg)
 
-[ Second layer]
+let's take a look at what the smallest layer would look like:
 
-[Third, final layer]
+![Obama in a jeep factory - cropped to show only
+Obama](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/test_results/crop.jpg_layer1.webp.png)
 
-If you're interested in more details you can go to the [repo]. More details on the [container's structure] are also there.
+That's just a cropped version of the original - nothing special.
+
+Now one layer above that:
+
+![Obama in a jeep factory - some context + diff from previous
+layer](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/test_results/crop.jpg_layer2.webp.png)
+
+You can see that pixels that don't appear in the previous layer are
+shown normally, while pixels that do only contain the difference between
+them and the equivalent ones in the previous layer.
+
+And the third, final layer:
+
+![Obama in a jeep factory - full context + diff from previous
+layer](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/test_results/crop.jpg_layer3.webp.png)
+
+### Res switching 
+
+The original resolution photo of a fruit:
+![iPhone - original
+resolution](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/res_switch.png)
+
+The first layer - showing a significantly downsized version
+![iPhone - significantly
+downsized](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/test_results/res_switch.png_layer1.webp.png)
+
+The second layer - A diff between a medium sized version and the
+"stretched" previous layer
+![iPhone - medium sized
+diff](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/test_results/res_switch.png_layer2.webp.png)
+
+And the third layer - containing a diff between the original and the
+"stretched" previous layer
+![iPhone - full sized
+diff](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/test_results/res_switch.png_layer3.webp.png)
+
+If you're interested in more details you can go to the [repo](https://github.com/yoavweiss/Responsive-Image-Container). More details on the [container's structure] are also there.
 
 ### But I need more from art-direction
 I've seen cases where rotation and image repositioning is required for art-direction cases. It was usually in order to add a logo/slogan at different locations around the image itself, depending on the viewport dimensions.

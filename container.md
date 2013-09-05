@@ -68,7 +68,7 @@ Internal fields:
 .four-bytes {max-width: 200px; width: 30%}
 .infinite-bytes {max-width: 600px; width: 90%}
 </style>
-<span class="box four-bytes">Box len</span><span class="box four-bytes">"FTYP"</span><span class="box four-bytes">"RIC "</span>
+<span style="display: inline-block; border: black solid 1px;box-sizing: border-box;margin: 0;padding: 0;" class="box four-bytes">Box len</span><span class="box four-bytes">"FTYP"</span><span class="box four-bytes">"RIC "</span>
 
 ### Image Layer Offset Table
 <span class="box four-bytes">Box len</span><span class="box four-bytes">"ILOT"</span>
