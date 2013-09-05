@@ -62,5 +62,4 @@ Internal fields:
 ## How is the container structured?
 
 ### File type 
-![Container
-structure](https://raw.github.com/yoavweiss/Responsive-Image-Container/master/container_structure.png)
+![Container structure](container_structure.png?raw=true)
