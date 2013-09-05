@@ -141,41 +141,41 @@ My proposed mechanism relies on HTTP ranges, similar to the fetching mechanisms 
 More specifically:
 
 * Resources that should be fetched progressively should be flagged as such. One possibility is to add a `progressive` attribute on the element describing the resource.
-* Once the browser detects an image resource with a `progressive` attribute on it, it picks the initial requested range for that resurce. The initial range request can be any one of either:
- - A relatively small fixed range for all images
+* Once the browser detects an image resource with a `progressive` attribute on it, it picks the initial requested range for that resurce. The initial range request can be any one of:
+ - A relatively small fixed range for all images (e.g. 8KB)
  - Specified by the author (e.g. as a value of the `progressive` attribute)
  - Some heuristic
  - Based on a manifest (we'll get to that later)  
-* The browser can fetch this initial range at the same time it requests the entire resource today, or even sooner, since the chances of starving critical path resources (e.g. CSS & JS) are slimmer.
-* Once the browser has downloaded the image's initial range, it has the file's offset table box, which links byte offset to resolution.  That means that once the browser has layout, it'd know exactly which byte range it needs in order to display the image correctly.
+* The browser can fetch this initial range at the same time it requests the entire resource today, or even sooner, since the chances of starving critical path resources (e.g. CSS & JS) are slimmer once the payloads are of known size.
+* Once the browser has downloaded the image's initial range, it has the file's offset table box, which links byte offset to resolution.  That means that once the browser has calculated the page's layout, it'd know exactly which byte range it needs in order to display the image correctly.
 * Assuming the browser sees fit, it can heuristically fetch followup layers(i.e. higher resolutions), even before it knows for certain that they are needed.
 * Once the browser has the page's layout, it can complete fetching of all the required image layers.
 
 The above mechanism will increase the number of HTTP requests, which in an HTTP/1.1 world will probably introduce some delay in many cases.
 That mechanism can be optimised by defining a manifest that would describe the image resources' bytes ranges to the browser.
-The idea for adding a manifest was proposed by [Cyril Concolato] at last year's TPAC, and it makes a lot of sense, borrowing from our collective experince with video streaming. It can enable browsers to avoid fetching an arbitrary initial range (at least once the manifest was downloaded itself).
+The idea for adding a manifest was proposed by [Cyril Concolato](https://twitter.com/cconcolato) at last year's TPAC, and it makes a lot of sense, borrowing from our collective experience with video streaming. It can enable browsers to avoid fetching an arbitrary initial range (at least once the manifest was downloaded itself).
 Adding a manifest will prevent these extra requests for everything requested after layout, and may help to prevent them (using heuristics) even before layout.
 
 Creating a manifest can be easily delegated to either build tools or the server side layer, so devs don't have to manually deal with these image
 specific details.
 
-### Can't we simply download the image and reset the connection once the browser had enough?
-No, since that will likely introduce serious performance issues.
+### Why complicate things? Can't we simply reset the connection?
+
+In theory we can, but that will likely introduce serious performance issues.
 The problem with reseting a TCP connection during a browsing session are:
 
 * It terminates an already connected, warmed up TCP connection which setup had a significant performance cost, and that could have be re-used for future resources.
-* It, by definition, sends at least an RTT worth of data down the pipe, the time it takes for the browser's reset to reach the server. That data is never read by the browser, which means wasted bandwidth.
+* It sends at least an RTT worth of data down the pipe, the time it takes for the browser's reset to reach the server. That data is never read by the browser, which means wasted bandwidth, and slower load times.
 
 ## What are the downsides of this approach?
 
-* It involves touching and modifying many pieces of the browser stack, which means that standardization and implementation may be more painful
-* The monochrome/print specific images cannot be addressed by this type of a solution. While this is not a major use-case, this is a downside.
-* The decoding algorithm involves a per-layer upscaling process, which may be heavy. Therefore, decoding performance may be an issue. Moving this to the GPU may help, but I don't know that area well enough to be the judge of that. If you have an opinion here, please comment. 
+* It involves touching and modifying many pieces of the browser stack, which means that standardization and implementation may be painful and long.
+* The [monochrome/print use case](http://usecases.responsiveimages.org/#matching-media-features-and-media-types) cannot be addressed by this type of a solution. 
+* The decoding algorithm involves a per-layer upscaling, which may be processing heavy. Therefore, decoding performance may be an issue. Moving this to the GPU may help, but I don't know that area well enough to be the judge of that. If you have an opinion the subject, please comment. 
 * Introducing a new file format is a painful and long process. As we have seen with the introduction of past image formats, the lack of a
   client-side mechanism makes this a painful process for Web developers. Since new file formats start out being supported in some browsers but not others, a server-side mechanism must be used (hopefully based on the Accept header, rather than on UA). I'm hoping that the fact that this new file format is very simple, and relies on other file formats to do the heavy lifting, may help here, but I'm not sure it would.
-* As discussed above, it's likely to increase the number of requests, and may introduce some delay in HTTP/1.1
-* This solution cannot answer the need for "pixel perfect" images, which is mainly needed to improve decoding speed. Even if it would, as we
-  said about, decoding speed is a concern.
+* As discussed above, it's likely to increase the number of requests, and may introduce some delay in HTTP/1.1.
+* This solution cannot answer the need for "pixel perfect" images, which is mainly needed to improve decoding speed. Even if it would, it's not certain that decoding speed would benefit from it.
 * Relying on HTTP ranges for the fetching mechanism can result in some problem with intermediate cache server, which don't support it.
 
 ## So, should we dump markup solutions?
