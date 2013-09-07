@@ -52,7 +52,7 @@ All of the above made me wonder (again) how wonderful life would be if we had a 
 * The burden is put on the image encoder. The markup stays identical to what it is today. A single tag with a single resource.
 * Automated conversion of sites to such a responsive images solution may be easier, since the automation layer would just focus on the images themselves rather than the page's markup and layout.
 * Image layout changes (following viewport dimension changes) can be handled by downloading only the difference between current image and the higher resolution one, without re-downloading the data that the browser already has in its memory.
-* Web developers will not need to maintain multiple version of each image resource, even though they would have to keep a non-responsive version of the image, for content negotiation purposes.
+* Web developers will not need to maintain multiple versions of each image resource, even though they would have to keep a non-responsive version of the image, for content negotiation purposes.
 
 This is my attempt at a simpler, file format based solution that will let Web developers do much less grunt work, avoid downloading useless image data (even when conditions change), while keeping preloaders working.
 
