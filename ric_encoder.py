@@ -54,23 +54,35 @@ commands = {
         }
 
 def read_cli_args():
-    if len(sys.argv) < 4:
-        print >>sys.stderr, "Usage:", sys.argv[0], "<input file> <output file> <config file>"
+    if len(sys.argv) < 2:
+        print >>sys.stderr, "Usage:", sys.argv[0], "encode/decode <input file> <output file> <config file>"
         return None
     commandStr = sys.argv[1]
     if not commands.has_key(commandStr):
         print >> sys.stderr, "Command can be only one of", commands.keys()
         return None
     command = commands[commandStr]
+    config_filename = ""
+    if commandStr == "encode":
+        if len(sys.argv) < 4:
+            print >>sys.stderr, "Usage:", sys.argv[0], "encode/decode <input file> <output file> <config file>"
+            return None
+        config_filename = sys.argv[4]
+    else:
+        if len(sys.argv) < 3:
+            print >>sys.stderr, "Usage:", sys.argv[0], "encode/decode <input file> <output file>"
+            return None
     input_filename = sys.argv[2]
     output_filename = sys.argv[3]
-    config_filename = sys.argv[4]
     return command, input_filename, output_filename, config_filename
 
 def apply(command, input_filename, output_filename, config_filename):
     input = open(input_filename, "rb").read()
-    config = json.load(open(config_filename, "rb"))
-    output = command(input, config)
+    if config_filename:
+        config = json.load(open(config_filename, "rb"))
+        output = command(input, config)
+    else:
+        output = command(input)
     if output:
         open(output_filename, "wb").write(output)
 
