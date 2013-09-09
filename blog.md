@@ -6,9 +6,9 @@ A few weeks back I started wondering if such an image format can be used to solv
 I had a few ideas on how this can be done, so I created a prototype to prove that it's feasible.  This prototype is [now
 available](https://github.com/yoavweiss/Responsive-Image-Container) for your tinkering pleasure.
 
-In this post I'll try to explain what this prototype does, what it cannot do, how it works, and what are its downsides. I'll also try to de-unicorn the responsive image format concept, and make it more tangible and less magical.
+In this post I'll try to explain what this prototype does, what it cannot do, how it works, and its advantages and disadvantages over markup solutions. I'll also try to de-unicorn the responsive image format concept, and make it more tangible and less magical.
 
-## Why not a markup solution? You hatin' on markup solutions?
+## You hatin' on markup solutions?
 
 I'm not! Honest. Some of my best friends are markup solutions. 
 
@@ -19,17 +19,17 @@ Current markup solutions (picture *and* srcset) are great and can cover all the 
 
 Here's some of the criticism I've been hearing for the last year or so when talking responsive images markup solutions.
 
-### They're too verbose
+### Too verbose
 
 Markup solution are by definition verbose, since they must enumerate all the various resources. When art-direction is involved, they must also state the breakpoints, which adds to that verbosity.
 
-### They're mixing presentation and content
+### Mixing presentation and content
 
 Art-direction markup solution needs to keep layout breakpoints in the markup. That mixes presentation and content, and means that layout changes will force markup changes.
 
 There have been [constructive discussions](http://lists.w3.org/Archives/Public/www-style/2013May/0638.html) on how this can be resolved, by bringing back the MQ definitions into CSS, but it's not certain when any of this will be defined and implemented.
 
-### They define breakpoints according to the viewport
+### Define viewport based breakpoints
 
 This one is heard often from developers. For performance reasons, markup based solutions are based on the viewport size, rather than on the image's dimensions. 
 Since the images' layout dimensions are not yet known to the browser by the time it start fetching images, it cannot rely on them to decide which resource to fetch.
@@ -38,7 +38,7 @@ For developers, that means that some sort of "viewport=>dimensions" table needs 
 
 While a build step can resolve that issue in many cases, it can get complicated in cases where a single components is used over multiple pages, with varying dimensions in each.
 
-### They may result in excessive download in some cases
+### Result in excessive download in some cases
 
 OK, this one is something I hear mostly in my head (and from other Web performance freaks on occasion).
 
@@ -47,7 +47,7 @@ From a performance perspective, any solution that's based on separate resources 
 
 All of the above made me wonder (again) how wonderful life would be if we had a file format based solution, that can address these concerns.
 
-## Why would a format based solution do better?
+## Why would a file format do better?
 
 * The burden is put on the image encoder. The markup stays identical to what it is today. A single tag with a single resource.
 * Automated conversion of sites to such a responsive images solution may be easier, since the automation layer would just focus on the images themselves rather than the page's markup and layout.
@@ -60,7 +60,7 @@ This is my attempt at a simpler, file format based solution that will let Web de
 Progressive JPEG can [fill this role](http://blog.yoav.ws/2012/05/Responsive-image-format) for the resolution switching case, but it's extremely rigid. There are strict limits on the lowest image quality, and from what I've seen, it is often too data-heavy. The minimal difference between resolutions is also limited, and doesn't leave enough control to encoders that want to do better.
 Furthermore, progressive JPEG cannot do art-direction at all.
 
-## So, how would this file format of yours looks like?
+## How would look like?
 A responsive image container, containing internal layers that can be either WebP, JPEG-XR, or any future format. It uses resizing and crop operations to cover both the resolution switching and the art direction use cases. 
 
 The decoder (e.g. the browser) will then be able to download just the number of layers it needs (and their bytes) in order to show a certain image. Each layer will provide enhancement on the layer before it, giving the decoder the data it needs to show it properly in a higher resolution.
