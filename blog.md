@@ -1,16 +1,17 @@
 #Responsive Image Container
 
-It's been a year since I last wrote about it, but the dream of the "magical image format" that will solve world hunger and the responsive image problem (whichever one comes first) lives on.
+It's been a year since [I last wrote about it](http://blog.yoav.ws/2012/08/Fetching-responsive-image-format), but the dream of the "magical image format" that will solve world hunger and/or the responsive images problem (whichever one comes first) lives on.
+
 A few weeks back I started wondering if such an image format can be used to solve both the [art-direction](http://usecases.responsiveimages.org/#art-direction) and [resolution-switching](http://usecases.responsiveimages.org/#resolution-switching) use-cases.
 
 I had a few ideas on how this can be done, so I created a prototype to prove that it's feasible.  This prototype is [now
-available](https://github.com/yoavweiss/Responsive-Image-Container) for your tinkering pleasure.
+available](https://github.com/yoavweiss/Responsive-Image-Container), ready to be tinkered with.
 
 In this post I'll try to explain what this prototype does, what it cannot do, how it works, and its advantages and disadvantages over markup solutions. I'll also try to de-unicorn the responsive image format concept, and make it more tangible and less magical.
 
-## You hatin' on markup solutions?
+## You've got something against markup solutions?
 
-I'm not! Honest. Some of my best friends are markup solutions. 
+No, I don't! Honest! Some of my best friends are markup solutions. 
 
 I've been part of the RICG for a while now, prototyping, promoting and presenting markup solutions.
 Current markup solutions (picture *and* srcset) are great and can cover all the important use cases for responsive images, and if it was up to me, I'd vote for shipping both picture and srcset (in its resolution switching version) in all browsers tomorrow.
@@ -57,10 +58,13 @@ All of the above made me wonder (again) how wonderful life would be if we had a 
 This is my attempt at a simpler, file format based solution that will let Web developers do much less grunt work, avoid downloading useless image data (even when conditions change), while keeping preloaders working.
 
 ## Why not progressive JPEG?
-Progressive JPEG can [fill this role](http://blog.yoav.ws/2012/05/Responsive-image-format) for the resolution switching case, but it's extremely rigid. There are strict limits on the lowest image quality, and from what I've seen, it is often too data-heavy. The minimal difference between resolutions is also limited, and doesn't leave enough control to encoders that want to do better.
+Progressive JPEG can [fill this role](http://blog.yoav.ws/2012/05/Responsive-image-format) for the resolution switching case, but it's extremely rigid.
+
+There are strict limits on the lowest image quality, and from what I've seen, it is often too data-heavy. The minimal difference between resolutions is also limited, and doesn't give enough control to encoders that want to do better.
+
 Furthermore, progressive JPEG cannot do art-direction at all.
 
-## How would look like?
+## How would it look like?
 A responsive image container, containing internal layers that can be either WebP, JPEG-XR, or any future format. It uses resizing and crop operations to cover both the resolution switching and the art direction use cases. 
 
 The decoder (e.g. the browser) will then be able to download just the number of layers it needs (and their bytes) in order to show a certain image. Each layer will provide enhancement on the layer before it, giving the decoder the data it needs to show it properly in a higher resolution.
@@ -73,7 +77,7 @@ The decoder (e.g. the browser) will then be able to download just the number of 
 
 Support for resolution switching is obvious in this case, but art-direction can also be supported by positioning the previous layer on the current one and being able to give it certain dimensions.
 
-Let's look at some examples, shall we:
+Let's look at some examples:
 
 
 ### Art-direction 
@@ -103,27 +107,31 @@ And the third, final layer:
 ![Obama in a jeep factory - full context + diff from previous
 layer](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/test_results/crop.jpg_layer3.webp.png)
 
-### Res switching 
+### Resolution switching 
 
-The original resolution photo of a fruit:
+A high resolution photo of a fruit:
+
 ![iPhone - original
 resolution](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/res_switch_shrink.png)
 
 The first layer - showing a significantly downsized version
+
 ![iPhone - significantly
 downsized](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/test_results/res_switch.png_layer1.webp.png)
 
 The second layer - A diff between a medium sized version and the
 "stretched" previous layer
+
 ![iPhone - medium sized
 diff](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/test_results/res_switch.png_layer2.webp.png)
 
 And the third layer - containing a diff between the original and the
 "stretched" previous layer
+
 ![iPhone - full sized
 diff](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/test_results/res_switch.png_layer3.webp.png)
 
-If you're interested in more details you can go to the [repo](https://github.com/yoavweiss/Responsive-Image-Container). More details on the [container's structure] are also there.
+If you're interested in more details you can go to the [repo](https://github.com/yoavweiss/Responsive-Image-Container). More details on the [container's structure](https://github.com/yoavweiss/Responsive-Image-Container/blob/master/container.md) are also there.
 
 ### But I need more from art-direction
 I've seen cases where rotation and image repositioning is required for art-direction cases. It was usually in order to add a logo/slogan at different locations around the image itself, depending on the viewport dimensions.
@@ -141,54 +149,60 @@ My proposed mechanism relies on HTTP ranges, similar to the fetching mechanisms 
 More specifically:
 
 * Resources that should be fetched progressively should be flagged as such. One possibility is to add a `progressive` attribute on the element describing the resource.
-* Once the browser detects an image resource with a `progressive` attribute on it, it picks the initial requested range for that resurce. The initial range request can be any one of:
+* Once the browser detects an image resource with a `progressive` attribute on it, it picks the initial requested range for that resource. The initial range request can be any one of:
   - A relatively small fixed range for all images (e.g. 8KB)
   - Specified by the author (e.g. as a value of the `progressive` attribute)
   - Some heuristic
   - Based on a manifest (we'll get to that later)  
 * The browser can fetch this initial range at the same time it requests the entire resource today, or even sooner, since the chances of starving critical path resources (e.g. CSS & JS) are slimmer once the payloads are of known size.
 * Once the browser has downloaded the image's initial range, it has the file's offset table box, which links byte offset to resolution.  That means that once the browser has calculated the page's layout, it'd know exactly which byte range it needs in order to display the image correctly.
-* Assuming the browser sees fit, it can heuristically fetch followup layers(i.e. higher resolutions), even before it knows for certain that they are needed.
+* Assuming the browser sees fit, it can heuristically fetch follow-up layers(i.e. higher resolutions), even before it knows for certain that they are needed.
 * Once the browser has the page's layout, it can complete fetching of all the required image layers.
 
 The above mechanism will increase the number of HTTP requests, which in an HTTP/1.1 world will probably introduce some delay in many cases.
-That mechanism can be optimised by defining a manifest that would describe the image resources' bytes ranges to the browser.
+
+That mechanism can be optimized by defining a manifest that would describe the image resources' bytes ranges to the browser.
 The idea for adding a manifest was proposed by [Cyril Concolato](https://twitter.com/cconcolato) at last year's TPAC, and it makes a lot of sense, borrowing from our collective experience with video streaming. It can enable browsers to avoid fetching an arbitrary initial range (at least once the manifest was downloaded itself).
+
 Adding a manifest will prevent these extra requests for everything requested after layout, and may help to prevent them (using heuristics) even before layout.
 
 Creating a manifest can be easily delegated to either build tools or the server side layer, so devs don't have to manually deal with these image
 specific details.
 
-### Why complicate things? Can't we simply reset the connection?
+### Can't we simply reset the connection?
 
-In theory we can, but that will likely introduce serious performance issues.
-The problem with reseting a TCP connection during a browsing session are:
+In theory we can address this by fetching the entire image, and reset the connection once the browser has all the necessary data, but that will most likely introduce serious performance issues.
+
+The problems with reseting a TCP connection during a browsing session are:
 
 * It terminates an already connected, warmed up TCP connection which setup had a significant performance cost, and that could have be re-used for future resources.
 * It sends at least an RTT worth of data down the pipe, the time it takes for the browser's reset to reach the server. That data is never read by the browser, which means wasted bandwidth, and slower load times.
 
-## What are the downsides of this approach?
+## Downsides of this approach?
 
-* It involves touching and modifying many pieces of the browser stack, which means that standardization and implementation may be painful and long.
+* It involves touching and modifying many pieces of the browser stack, which means that standardization and implementation may be painful and take a while.
 * The [monochrome/print use case](http://usecases.responsiveimages.org/#matching-media-features-and-media-types) cannot be addressed by this type of a solution. 
-* The decoding algorithm involves a per-layer upscaling, which may be processing heavy. Therefore, decoding performance may be an issue. Moving this to the GPU may help, but I don't know that area well enough to be the judge of that. If you have an opinion the subject, please comment. 
-* Introducing a new file format is a painful and long process. As we have seen with the introduction of past image formats, the lack of a
+* The decoding algorithm involves a per-layer upscaling, which may be processing heavy. Therefore, decoding performance may be an issue. Moving this to the GPU may help, but I don't know that area well enough to be the judge of that. If you have an opinion the subject, I'd appreciate your comments. 
+* Introducing a new file format is a long process. As we have seen with the introduction of past image formats, the lack of a
   client-side mechanism makes this a painful process for Web developers. Since new file formats start out being supported in some browsers but not others, a server-side mechanism must be used (hopefully based on the Accept header, rather than on UA). I'm hoping that the fact that this new file format is very simple and relies on other file formats to do the heavy lifting, may help here, but I'm not sure it would.
 * As discussed above, it's likely to increase the number of requests, and may introduce some delay in HTTP/1.1.
 * This solution cannot answer the need for "pixel perfect" images, which is mainly needed to improve decoding speed. Even if it would, it's not certain that decoding speed would benefit from it.
 * Relying on HTTP ranges for the fetching mechanism can result in some problem with intermediate cache server, which don't support it.
 
 ## So, should we dump markup solutions?
-Not at all. This is a prototype, showing how most of the responsive images use-cases would have been solved. Reaching consensus on this solution, defining it in detail and implementing it in an interoperable way may be a long process. The performance implication on HTTP/1.1 sites still needs to be explored.
+Not at all. This is a prototype, showing how most of the responsive images use-cases would have been solved by such a container. 
+
+Reaching consensus on this solution, defining it in detail and implementing it in an interoperable way may be a long process. The performance implications on HTTP/1.1 sites and decoding speed still needs to be explored.
+
 I believe this may be a way to simplify responsive images in the future, but I don't think we should wait for the ideal solution. 
 
-## Summary
+## To sum it up
 If you just skipped here, that's OK. It's a long post.
 
-Just to sum it up, I've demonstrated (along with a prototype) how a responsive image format can work, and can resolve most of the responsive images use cases. I also went into some details about which other bits would have to be added to the platform in order to make it a viable solution.
+Just to sum it up, I've demonstrated (along with a prototype) how a responsive image format can work, and can resolve most of the responsive images use cases. I also went into some detail about which other bits would have to be added to the platform in order to make it a viable solution.
 
-I consider this solution to be a long term solution since some key issues need to be addressed before this solution can be practical.  
-IMO, the main issue is decoding performance, with download performance impact on HTTP/1.1 is a close second.
+I consider this to be a long term solution since some key issues need to be addressed before this solution can be practical.  
+IMO, the main issue is decoding performance, with download performance impact on HTTP/1.1 being a close second.
 
-I think it's worth while to continue to explore this option, but not wait for it. Responsive images need an in-the-browser, real-life solution <del>Two years ago</del> today, not two years from now.
+I think it's worth while to continue to explore this option, but not wait for it. Responsive images need an in-the-browser, real-life solution <del>two years ago</del> today, not two years from now.
 
