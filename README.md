@@ -43,10 +43,29 @@ while back.
 ## Downsides of this solution
 
 * Decoding of this container will consume more than traditional
-  sequantial JPEGs, since it'd require layer compositing. 
- - This may be eased by using the GPU for compositing.
+  sequantial JPEGs, since it'd require layer upscaling. 
+ - This may be eased by using the GPU for upscaling.
+* Network performance in HTTP/1.1 may be an issue. Needs to be investigated.
+* Monochrome or print specific images are not supported.
 * If art-directed images of lower resolution are completely different than
 their higher resolution counterparts, this solution is no good for that
 case. 
  - A separate resource would be better there.
  - There seems to be a consensus that this case is rather rare.
+
+## Dependencies
+
+* libjpeg
+* libzlib
+* libwebp
+* PIL
+
+On ubuntu you can run `sudo apt-get install libjpeg-dev zlib1g-dev libwebp-dev python-pillow`
+
+## Usage
+
+Encoding: `./ric_encoder.py encode <input> <output> <config>`
+Decoding: `./ric_encoder.py decode <input> <output>`
+
+The config files are json files that indicate the output width and crop
+for each layer. Examples can be found in `samples/*_config.txt`.
