@@ -107,7 +107,7 @@ layer](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/sam
 
 The original resolution photo of a fruit:
 ![iPhone - original
-resolution](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/res_switch.png)
+resolution](https://raw.github.com/yoavweiss/Responsive-Image-Container/blog_post/samples/res_switch_shrink.png)
 
 The first layer - showing a significantly downsized version
 ![iPhone - significantly
